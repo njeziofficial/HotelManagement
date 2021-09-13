@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
-using BusinessLogicLayer.States;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
 
 namespace DataAccessLayer.Models
 {
@@ -18,5 +12,6 @@ namespace DataAccessLayer.Models
         public int UserID { get; set; }
         public double Price { get; set; }
         public int RoomID { get; set; }
+        public string RoomPicture { get; set; }
     }
 }

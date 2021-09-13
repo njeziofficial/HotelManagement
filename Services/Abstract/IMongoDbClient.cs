@@ -7,6 +7,6 @@ namespace Services.Abstract
 {
     public interface IMongoDbClient<T>
     {
-        IMongoCollection<T> GetMongo();
+        //IMongoCollection<T> GetMongo();
     }
 }

@@ -6,31 +6,29 @@ using System.Text;
 using DataAccessLayer.Models;
 using System.Net.Mail;
 using System.Net;
+using DataAccessLayer.Context;
 
 namespace BusinessLogicLayer
 {
     public class UserBLL
     {
-        private readonly IConfiguration _configuration;
-        public UserBLL(IConfiguration configuration)
+        private readonly IMongoCollection<User> db;
+        public UserBLL(IUserDbContext user)
         {
-            _configuration = configuration;
+            var client = new MongoClient(user.ConnectionString);
+            var database = client.GetDatabase(user.DatabaseName);
+
+            db = database.GetCollection<User>(user.CollectionName);
         }
 
-        private IMongoCollection<User> db() =>
-        new MongoClient(_configuration
-            .GetConnectionString("hotelDb"))
-            .GetDatabase("HotelManagement")
-            .GetCollection<User>("User");
-
-        public bool Register(User user)
+        public User Register(User user)
         {
-            int lastUserID = db().AsQueryable().ToList().Count;
-            user.UserID = lastUserID + 1;
-
-            db().InsertOne(user);
-            bool isSuccess = true;
-            return isSuccess;
+            user.UserID = (int)db.Find(user => true)
+                .CountDocuments() + 1;
+            db.InsertOne(user);
+            user.isRegistered = true;
+            user.ClientState = (int)Client.Registered;
+            return user;
         }
 
         public static bool SendNotificationEmail(SendNotificationEmailRequest request)
