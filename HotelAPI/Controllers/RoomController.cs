@@ -1,10 +1,9 @@
-﻿using DataAccessLayer.Models;
+﻿using DataAccessLayer.Context;
+using DataAccessLayer.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
-using MongoDB.Driver.Linq;
 using Services.Abstract;
-using System;
+using Services.Concrete;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,65 +16,50 @@ namespace APIs.Controllers
     [ApiController]
     public class RoomController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        public RoomController(IConfiguration configuration)
+        private readonly IMongoCollection<Room> db;
+        public RoomController(IRoomDbContext room)
         {
-            _configuration = configuration;
+            var client = new MongoClient(room.ConnectionString);
+            var database = client.GetDatabase(room.DatabaseName);
+
+            db = database.GetCollection<Room>(room.CollectionName);
         }
 
-        private IMongoCollection<Room> db() =>
-        new MongoClient(_configuration
-            .GetConnectionString("hotelDb"))
-            .GetDatabase("HotelManagement")
-            .GetCollection<Room>("Room");
-        
-
-        // GET: api/<RoomController>
         [HttpGet]
-        public JsonResult Get()
-        {
-            var rooms = db().AsQueryable();
-            return new JsonResult(rooms);
-        }
+        public JsonResult ReviewRooms() =>
+            new JsonResult(db.Find(rooms => rooms.RoomState != (int)RoomState.Unavailable)
+            .ToList());
 
-        // GET api/<RoomController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
+        public Room ReviewRoom(int id) =>
+           db.Find(room => room.RoomID == id
+           && room.RoomState != (int)RoomState.Unavailable)
+                .FirstOrDefault();
 
-        // POST api/<RoomController>
         [HttpPost]
-        public JsonResult Post([FromBody] Room room)
+        public Room CreateRoom(Room room)
         {
-            int lastRoomID = db().AsQueryable().Count();
-            room.RoomID = lastRoomID + 1;
-
-            db().InsertOne(room);
-            return new JsonResult("Room Added Successfully");
-
+            room.RoomID = (int)db.Find(rooms => true)
+                .CountDocuments() + 1;
+            db.InsertOne(room);
+            return room;
         }
 
-        // PUT api/<RoomController>/5
-        [HttpPut]
-        public JsonResult Put(Room room)
+        [HttpPut("{id}")]
+        public Room EditRoom(int id, Room room)
         {
-            var filter = Builders<Room>.Filter.Eq("RoomID", room.RoomID);
-            var updatePrice = Builders<Room>.Update.Set("Price", room.Price);
-            
-            db().UpdateOne(filter, updatePrice);
-            return new JsonResult("Updated Successfully");
+            db.ReplaceOne(room => room.RoomID == id, room);
+            return room;
         }
 
-        // DELETE api/<RoomController>/5
         [HttpDelete("{id}")]
-        public JsonResult Delete(int id)
+        public string DeleteRoom(int id)
         {
-            var filter = Builders<Room>.Filter.Eq("RoomID", id);
-
-            db().DeleteOne(filter);
-            return new JsonResult("Deleted Successfully");
+            var room = db.Find(room => room.RoomID == id).FirstOrDefault();
+            room.RoomState = (int)RoomState.Unavailable;
+            db.ReplaceOne(room => room.RoomID == id, room);
+            return "Room deleted successfully.";
         }
     }
 }
+

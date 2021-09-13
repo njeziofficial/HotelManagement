@@ -397,6 +397,22 @@
           }
         }
       },
+      "BusinessLogicLayer/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v3.1",
+        "dependencies": {
+          "DataAccessLayer": "1.0.0",
+          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "3.1.16",
+          "MongoDB.Driver": "2.13.1",
+          "stateless": "5.11.0"
+        },
+        "compile": {
+          "bin/placeholder/BusinessLogicLayer.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/BusinessLogicLayer.dll": {}
+        }
+      },
       "DataAccessLayer/1.0.0": {
         "type": "project",
         "framework": ".NETCoreApp,Version=v3.1",
@@ -417,6 +433,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v3.1",
         "dependencies": {
+          "BusinessLogicLayer": "1.0.0",
+          "DataAccessLayer": "1.0.0",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "3.1.16",
           "MongoDB.Driver": "2.13.1"
         },
@@ -1230,6 +1248,11 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "BusinessLogicLayer/1.0.0": {
+      "type": "project",
+      "path": "../BusinessLogicLayer/BusinessLogicLayer.csproj",
+      "msbuildProject": "../BusinessLogicLayer/BusinessLogicLayer.csproj"
     },
     "DataAccessLayer/1.0.0": {
       "type": "project",

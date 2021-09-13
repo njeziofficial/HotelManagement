@@ -10,7 +10,7 @@ namespace HotelAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class User : ControllerBase
+    public class UserController : ControllerBase
     {
         // GET: api/<User>
         [HttpGet]

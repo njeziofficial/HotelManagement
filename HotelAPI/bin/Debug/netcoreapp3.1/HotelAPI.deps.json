@@ -696,6 +696,20 @@
           "System.Runtime.CompilerServices.Unsafe": "5.0.0"
         }
       },
+      "BusinessLogicLayer/1.0.0": {
+        "dependencies": {
+          "DataAccessLayer": "1.0.0",
+          "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "3.1.16",
+          "MongoDB.Driver": "2.13.1",
+          "stateless": "5.11.0"
+        },
+        "runtime": {
+          "BusinessLogicLayer.dll": {}
+        },
+        "compile": {
+          "BusinessLogicLayer.dll": {}
+        }
+      },
       "DataAccessLayer/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "3.1.16",
@@ -712,6 +726,8 @@
       },
       "Services/1.0.0": {
         "dependencies": {
+          "BusinessLogicLayer": "1.0.0",
+          "DataAccessLayer": "1.0.0",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "3.1.16",
           "MongoDB.Driver": "2.13.1"
         },
@@ -2559,6 +2575,11 @@
       "sha512": "sha512-4J2JQXbftjPMppIHJ7IC+VXQ9XfEagN92vZZNoG12i+zReYlim5dMoXFC1Zzg7tsnKDM7JPo5bYfFK4Jheq44w==",
       "path": "system.text.encoding.codepages/4.5.1",
       "hashPath": "system.text.encoding.codepages.4.5.1.nupkg.sha512"
+    },
+    "BusinessLogicLayer/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     },
     "DataAccessLayer/1.0.0": {
       "type": "project",

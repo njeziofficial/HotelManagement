@@ -1,18 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Newtonsoft.Json.Serialization;
-using System.Configuration;
 using Microsoft.Extensions.Configuration;
 using Services.Abstract;
 using Services.Concrete;
 using DataAccessLayer.Models;
+using DataAccessLayer.Context;
+using Microsoft.Extensions.Options;
 
 namespace HotelAPI
 {
@@ -28,6 +24,11 @@ namespace HotelAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<RoomDbContext>(Configuration.GetSection(nameof(RoomDbContext)));
+
+            //services.AddSingleton<IHotelDbContext, HotelDbContext>();
+            services.AddSingleton<IRoomDbContext>(sp => sp.GetRequiredService<IOptions<RoomDbContext>>().Value);
+
             services.AddRazorPages();
 
             //Enable CORS
@@ -39,7 +40,7 @@ namespace HotelAPI
             //JSON Serializer
             services.AddControllersWithViews().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore)
                 .AddNewtonsoftJson(options => options.SerializerSettings.ContractResolver = new DefaultContractResolver());
-            //services.AddTransient<IMongoDbClient<Room>, MongoDbClient<Room>>();
+            //services.AddSingleton<IRoomDbContext>(sp => sp.GetRequiredService<IOptions<RoomDbContext>>().Value);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
